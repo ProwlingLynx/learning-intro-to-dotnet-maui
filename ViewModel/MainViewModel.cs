@@ -1,27 +1,43 @@
-﻿using System.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using System.Collections.ObjectModel;
 
 namespace MauiApp1.ViewModel
 {
-    public class MainViewModel : INotifyPropertyChanged
+    public partial class MainViewModel : ObservableObject
     {
-        string text;
-        public string Text
+        public MainViewModel()
         {
-            get { return text; }
-            set
-            {
-                text = value;
-                OnPropertyChanged(nameof(Text));
-                // nameof grabs the name of the variable/class/input. It does not give values.
-                // eg. string cat = "meow"; nameof(cat) -> "cat" not "meow".
-            }
+            Items = new ObservableCollection<string>();
         }
 
-        public event PropertyChangedEventHandler PropertyChanged; // Its a field that needs to be implemented from INotifyPropertyChanged.
-        // PropertyChangedEventHandler is an event handler object
-        void OnPropertyChanged(string name)
+        [ObservableProperty]
+        ObservableCollection<string> items;
+
+        [ObservableProperty]
+        string text;
+
+        [RelayCommand] // video suggested ICommand. Correction to use RelayCommand instead.
+        void Add() // Because of our decorator, there will be a AddCommand generated
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            if (string.IsNullOrWhiteSpace(Text))
+            {
+                // Note: There is an option to use if (expression) return; instead. Even with newlines
+                return;
+            }
+            // add our item
+            Items.Add(Text);
+            // Empty out the list.
+            Text = string.Empty;
+        }
+
+        [RelayCommand]
+        void Delete(string s)
+        {
+            if (Items.Contains(s))
+            {
+                Items.Remove(s);
+            }
         }
     }
 }

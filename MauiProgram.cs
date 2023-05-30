@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using MauiApp1.ViewModel;
+using Microsoft.Extensions.Logging;
 
 namespace MauiApp1;
 
@@ -18,6 +19,9 @@ public static class MauiProgram
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
+        // Registers these objects with dependency injection service.
+        builder.Services.AddSingleton<MainPage>();
+        builder.Services.AddSingleton<MainViewModel>();
 
         return builder.Build();
     }
