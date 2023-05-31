@@ -6,9 +6,11 @@ namespace MauiApp1.ViewModel
 {
     public partial class MainViewModel : ObservableObject
     {
-        public MainViewModel()
+        IConnectivity connectivity;
+        public MainViewModel(IConnectivity connectivity)
         {
             Items = new ObservableCollection<string>();
+            this.connectivity = connectivity;
         }
 
         [ObservableProperty]
@@ -18,13 +20,20 @@ namespace MauiApp1.ViewModel
         string text;
 
         [RelayCommand] // video suggested ICommand. Correction to use RelayCommand instead.
-        void Add() // Because of our decorator, there will be a AddCommand generated
+        async void Add() // Because of our decorator, there will be a AddCommand generated
         {
             if (string.IsNullOrWhiteSpace(Text))
             {
                 // Note: There is an option to use if (expression) return; instead. Even with newlines
                 return;
             }
+
+            if (connectivity.NetworkAccess != NetworkAccess.Internet)
+            {
+                await Shell.Current.DisplayAlert("Uh Oh!", "No Internet", "OK");
+                return;
+            }
+
             // add our item
             Items.Add(Text);
             // Empty out the list.
